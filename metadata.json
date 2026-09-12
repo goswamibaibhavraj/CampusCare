@@ -1,0 +1,7 @@
+{
+  "name": "CampusCare",
+  "description": "Healthcare support for LPU students, all in one place. Book doctor appointments, virtual telehealth consultations, manage digital prescriptions, and track medical routines.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

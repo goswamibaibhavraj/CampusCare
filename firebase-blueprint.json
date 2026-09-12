@@ -1,0 +1,33 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "Student profile data in CampusCare",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "registrationNo": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": ["uid", "email"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "Individual student account records"
+    }
+  }
+}
