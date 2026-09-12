@@ -24,6 +24,7 @@ try {
   console.warn('[CampusCare] Firebase initialization note:', error);
 }
 
-export const app = firebaseApp!;
+export const app = firebaseApp;
 export const auth = firebaseAuth;
 export const db = firestoreDb;
+
