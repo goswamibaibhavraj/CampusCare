@@ -12,7 +12,18 @@ export const firebaseConfig = {
   measurementId: "G-HNWGYB7GVE"
 };
 
-// Initialize Firebase safely
-export const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+let firebaseApp: ReturnType<typeof initializeApp> | null = null;
+let firebaseAuth: ReturnType<typeof getAuth> | null = null;
+let firestoreDb: ReturnType<typeof getFirestore> | null = null;
+
+try {
+  firebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  firebaseAuth = getAuth(firebaseApp);
+  firestoreDb = getFirestore(firebaseApp);
+} catch (error) {
+  console.warn('[CampusCare] Firebase initialization note:', error);
+}
+
+export const app = firebaseApp!;
+export const auth = firebaseAuth;
+export const db = firestoreDb;

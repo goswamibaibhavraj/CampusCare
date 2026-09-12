@@ -120,7 +120,7 @@ export const CareTeamPage: React.FC = () => {
 
               <button
                 onClick={() => {
-                  startConsultation();
+                  setCurrentPage('consultation');
                 }}
                 className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold flex items-center gap-1.5 transition-colors"
               >

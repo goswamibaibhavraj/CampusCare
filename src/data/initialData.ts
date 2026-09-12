@@ -6,6 +6,7 @@ import {
   StudentProfile,
   HealthFacility,
   NotificationItem,
+  MedicineInfo,
 } from '../types';
 
 export const INITIAL_STUDENT_PROFILE: StudentProfile = {
@@ -519,62 +520,77 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
 ];
 
-export const MOCK_MEDICINE_DATABASE: {
-  name: string;
-  category: string;
-  uses: string;
-  dosageGuidelines: string;
-  safetyAdvice: string;
-  sideEffects: string[];
-}[] = [
+export const MOCK_MEDICINE_DATABASE: MedicineInfo[] = [
   {
+    id: 'med-paracetamol-650',
     name: 'Paracetamol 650 mg',
-    category: 'Analgesic & Antipyretic',
-    uses: 'Relief of mild-to-moderate fever, headache, bodyache, and muscle fatigue.',
-    dosageGuidelines: '1 tablet every 6–8 hours as required after food. Max 3000mg/day.',
-    safetyAdvice:
-      'Do not combine with other paracetamol-containing cold remedies. Avoid alcohol consumption.',
+    genericName: 'Acetaminophen / Paracetamol',
+    category: 'Pain relief / Fever',
+    dosageForm: 'Tablet',
+    commonUse: 'Relief of mild-to-moderate fever, headache, bodyache, and muscle fatigue.',
+    instructions: '1 tablet every 6–8 hours as required after food. Max 3000mg/day.',
+    storage: 'Store below 25°C in a cool dry place away from sunlight',
+    campusAvailability: 'In Stock (Central Pharmacy Block 32)',
     sideEffects: ['Rare nausea', 'Mild allergic skin rash if sensitive'],
   },
   {
+    id: 'med-cetirizine-10',
     name: 'Cetirizine 10 mg',
-    category: 'Second-Generation Antihistamine',
-    uses: 'Relief of allergy symptoms including sneezing, runny nose, watery eyes, and itching.',
-    dosageGuidelines: '1 tablet once daily preferably at bedtime.',
-    safetyAdvice:
-      'May cause mild drowsiness. Avoid driving or operating machinery after taking.',
+    genericName: 'Cetirizine Hydrochloride',
+    category: 'Allergy / Cold',
+    dosageForm: 'Tablet',
+    commonUse: 'Relief of allergy symptoms including sneezing, runny nose, watery eyes, and itching.',
+    instructions: '1 tablet once daily preferably at bedtime.',
+    storage: 'Store at room temperature (15–30°C)',
+    campusAvailability: 'In Stock (Uni-Health Dispensary)',
     sideEffects: ['Drowsiness', 'Dry mouth', 'Mild headache'],
   },
   {
+    id: 'med-vitamin-c-500',
     name: 'Vitamin C 500 mg (Ascorbic Acid)',
-    category: 'Water-Soluble Vitamin & Antioxidant',
-    uses: 'Supports immune defense, wound healing, and collagen maintenance.',
-    dosageGuidelines: '1 chewable tablet daily after breakfast.',
-    safetyAdvice: 'Safe for daily maintenance. Drink plenty of water throughout the day.',
+    genericName: 'Ascorbic Acid',
+    category: 'Vitamins / Supplements',
+    dosageForm: 'Chewable Tablet',
+    commonUse: 'Supports immune defense, wound healing, and collagen maintenance.',
+    instructions: '1 chewable tablet daily after breakfast.',
+    storage: 'Store below 25°C in moisture-proof container',
+    campusAvailability: 'In Stock (Central Pharmacy Block 32)',
     sideEffects: ['Mild stomach upset if taken on an empty stomach'],
   },
   {
+    id: 'med-calamine-lotion',
     name: 'Calamine Lotion',
-    category: 'Topical Antipruritic',
-    uses: 'Soothes insect bites, minor skin irritations, sunburn, and itching.',
-    dosageGuidelines: 'Shake bottle well and apply gently with clean cotton pad.',
-    safetyAdvice: 'For external skin use only. Do not apply inside eyes or open bleeding cuts.',
+    genericName: 'Zinc Oxide & Ferric Oxide Solution',
+    category: 'First aid',
+    dosageForm: 'Topical Suspension',
+    commonUse: 'Soothes insect bites, minor skin irritations, sunburn, and itching.',
+    instructions: 'Shake bottle well and apply gently with clean cotton pad.',
+    storage: 'Store at room temperature. Do not freeze.',
+    campusAvailability: 'In Stock (Block 32 & First Aid Booths)',
     sideEffects: ['Mild local dryness'],
   },
   {
+    id: 'med-azithromycin-500',
     name: 'Azithromycin 500 mg',
-    category: 'Macrolide Antibiotic',
-    uses: 'Bacterial respiratory infections, tonsillitis, and bacterial sinusitis.',
-    dosageGuidelines: 'Strictly as prescribed by a qualified doctor. Typically once daily for 3 days.',
-    safetyAdvice: 'Complete full course even if symptoms improve. Prescription strictly mandatory.',
+    genericName: 'Azithromycin Dihydrate',
+    category: 'Antibiotics / Antiviral',
+    dosageForm: 'Tablet',
+    commonUse: 'Bacterial respiratory infections, tonsillitis, and bacterial sinusitis.',
+    instructions: 'Strictly as prescribed by a qualified doctor. Typically once daily for 3 days.',
+    storage: 'Store at room temperature below 30°C',
+    campusAvailability: 'Prescription Required (Uni-Health OPD Pharmacy)',
     sideEffects: ['Loose stools', 'Stomach cramp', 'Nausea'],
   },
   {
+    id: 'med-pantoprazole-40',
     name: 'Pantoprazole 40 mg',
-    category: 'Proton Pump Inhibitor (PPI)',
-    uses: 'Hyperacidity, gastroesophageal reflux (GERD), and gastric protection during medications.',
-    dosageGuidelines: '1 tablet early morning 30 minutes before breakfast.',
-    safetyAdvice: 'Swallow whole with water; do not crush or chew.',
+    genericName: 'Pantoprazole Sodium',
+    category: 'Digestive',
+    dosageForm: 'Delayed-Release Tablet',
+    commonUse: 'Hyperacidity, gastroesophageal reflux (GERD), and gastric protection during medications.',
+    instructions: '1 tablet early morning 30 minutes before breakfast with water.',
+    storage: 'Store in original packaging below 25°C',
+    campusAvailability: 'In Stock (Central Pharmacy Block 32)',
     sideEffects: ['Mild headache', 'Flatulence'],
   },
 ];

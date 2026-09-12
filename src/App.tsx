@@ -68,7 +68,10 @@ const MainAppLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col selection:bg-blue-100 selection:text-blue-900">
       {/* Top Fixed Navbar */}
-      <Navbar onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)} />
+      <Navbar
+        onToggleMobileSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
+        isMobileSidebarOpen={isMobileSidebarOpen}
+      />
 
       {/* Main Framework with Desktop Sidebar */}
       <div className="flex-1 flex">

@@ -99,7 +99,7 @@ export const AssistantPage: React.FC = () => {
         {/* Message Stream */}
         <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
           {assistantMessages.map((msg) => {
-            const isUser = msg.sender === 'user';
+            const isUser = msg.sender === 'student';
             return (
               <div
                 key={msg.id}

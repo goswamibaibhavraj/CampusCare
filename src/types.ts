@@ -130,10 +130,12 @@ export interface RoutineMedicineItem {
   medicineName: string;
   dosage: string;
   timeSlot: string; // e.g., "08:30 AM"
-  timeOfDay: 'Morning' | 'Afternoon' | 'Evening' | 'Night';
-  dayOfWeek: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+  timeOfDay?: 'Morning' | 'Afternoon' | 'Evening' | 'Night' | string;
+  dayOfWeek?: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday' | string;
+  day?: DayOfWeek | string;
+  mealTiming?: string;
   instructions: string;
-  prescriptionSource: string;
+  prescriptionSource?: string;
   taken: boolean;
   takenAt?: string;
 }

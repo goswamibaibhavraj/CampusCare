@@ -18,6 +18,7 @@ import {
   StudentProfile,
   ChatMessage,
   NotificationItem,
+  HealthFacility,
 } from '../types';
 import {
   INITIAL_STUDENT_PROFILE,
@@ -26,6 +27,8 @@ import {
   INITIAL_PRESCRIPTIONS,
   INITIAL_ROUTINE,
   INITIAL_NOTIFICATIONS,
+  LPU_FACILITIES,
+  MOCK_MEDICINE_DATABASE,
 } from '../data/initialData';
 
 interface ToastItem {
@@ -97,8 +100,14 @@ interface AppContextType {
   // Medical Routine
   routineItems: RoutineMedicineItem[];
   toggleMedicineTaken: (id: string) => void;
+  addCustomRoutineItem: (item: Partial<RoutineMedicineItem>) => void;
+  resetRoutineForToday: () => void;
   todayCompletedCount: number;
   todayTotalCount: number;
+
+  // Facilities & Medicines
+  facilities: HealthFacility[];
+  medicines: typeof MOCK_MEDICINE_DATABASE;
 
   // CampusCare Assistant
   assistantMessages: ChatMessage[];
@@ -238,20 +247,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Listen to Firebase Auth state
   useEffect(() => {
+    if (!auth) {
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setFirebaseUser(user);
       if (user) {
         setIsAuthenticated(true);
         try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            setStudentProfile((prev) => ({
-              ...prev,
-              name: data.name || user.displayName || prev.name,
-              email: user.email || prev.email,
-              registrationNo: data.registrationNo || prev.registrationNo,
-            }));
+          if (db) {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              const data = userDoc.data();
+              setStudentProfile((prev) => ({
+                ...prev,
+                name: data.name || user.displayName || prev.name,
+                email: user.email || prev.email,
+                registrationNo: data.registrationNo || prev.registrationNo,
+              }));
+            } else if (user.displayName || user.email) {
+              setStudentProfile((prev) => ({
+                ...prev,
+                name: user.displayName || prev.name,
+                email: user.email || prev.email,
+              }));
+            }
           } else if (user.displayName || user.email) {
             setStudentProfile((prev) => ({
               ...prev,
@@ -324,6 +344,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     email: string,
     password: string
   ): Promise<{ success: boolean; error?: string }> => {
+    if (!auth) {
+      const msg = 'Firebase Authentication is not available. Please try the 1-Click Test.';
+      showToast('Auth Error', msg, 'error');
+      return { success: false, error: msg };
+    }
     setIsAuthLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
@@ -333,21 +358,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentPage('dashboard');
 
       try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setStudentProfile((prev) => ({
-            ...prev,
-            name: data.name || user.displayName || prev.name,
-            email: user.email || prev.email,
-            registrationNo: data.registrationNo || prev.registrationNo,
-          }));
-        } else if (user.displayName || user.email) {
-          setStudentProfile((prev) => ({
-            ...prev,
-            name: user.displayName || prev.name,
-            email: user.email || prev.email,
-          }));
+        if (db) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            setStudentProfile((prev) => ({
+              ...prev,
+              name: data.name || user.displayName || prev.name,
+              email: user.email || prev.email,
+              registrationNo: data.registrationNo || prev.registrationNo,
+            }));
+          } else if (user.displayName || user.email) {
+            setStudentProfile((prev) => ({
+              ...prev,
+              name: user.displayName || prev.name,
+              email: user.email || prev.email,
+            }));
+          }
         }
       } catch (err) {
         console.warn('Could not read user profile from Firestore:', err);
@@ -385,6 +412,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     name: string,
     registrationNo?: string
   ): Promise<{ success: boolean; error?: string }> => {
+    if (!auth) {
+      const msg = 'Firebase Authentication is not available. Please try the 1-Click Test.';
+      showToast('Auth Error', msg, 'error');
+      return { success: false, error: msg };
+    }
     setIsAuthLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
@@ -415,17 +447,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentPage('dashboard');
 
       try {
-        await setDoc(
-          doc(db, 'users', user.uid),
-          {
-            uid: user.uid,
-            email: email.trim(),
-            name: name.trim() || studentProfile.name,
-            registrationNo: regNo,
-            createdAt: new Date().toISOString(),
-          },
-          { merge: true }
-        );
+        if (db) {
+          await setDoc(
+            doc(db, 'users', user.uid),
+            {
+              uid: user.uid,
+              email: email.trim(),
+              name: name.trim() || studentProfile.name,
+              registrationNo: regNo,
+              createdAt: new Date().toISOString(),
+            },
+            { merge: true }
+          );
+        }
       } catch (err) {
         console.warn('Could not store student profile in Firestore:', err);
       }
@@ -472,10 +506,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const logout = async () => {
-    try {
-      await signOut(auth);
-    } catch (e) {
-      console.warn('Firebase signOut error:', e);
+    if (auth) {
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.warn('Firebase signOut error:', e);
+      }
     }
     setFirebaseUser(null);
     setIsAuthenticated(false);
@@ -828,6 +864,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const addCustomRoutineItem = (item: Partial<RoutineMedicineItem>) => {
+    const newItem: RoutineMedicineItem = {
+      id: 'routine-' + Date.now(),
+      medicineName: item.medicineName || 'Prescribed Medicine',
+      dosage: item.dosage || '1 Tablet',
+      timeSlot: item.timeSlot || '08:30 AM',
+      timeOfDay: (item.timeOfDay as any) || 'Morning',
+      dayOfWeek: (item.dayOfWeek as any) || 'Saturday',
+      day: item.day || 'Sat',
+      mealTiming: item.mealTiming || 'After food',
+      instructions: item.instructions || 'Take with water',
+      prescriptionSource: item.prescriptionSource || 'Student Custom Routine',
+      taken: false,
+    };
+    setRoutineItems((prev) => [newItem, ...prev]);
+    showToast('Routine Updated', `${newItem.medicineName} added to your routine`, 'success');
+  };
+
+  const resetRoutineForToday = () => {
+    setRoutineItems((prev) =>
+      prev.map((item) => ({ ...item, taken: false, takenAt: undefined }))
+    );
+    showToast('Routine Reset', 'Routine tracker has been reset for today.', 'info');
+  };
+
   const todayCompletedCount = routineItems.filter((i) => i.taken).length;
   const todayTotalCount = routineItems.length || 4;
 
@@ -1010,8 +1071,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         routineItems,
         toggleMedicineTaken,
+        addCustomRoutineItem,
+        resetRoutineForToday,
         todayCompletedCount,
         todayTotalCount,
+
+        facilities: LPU_FACILITIES,
+        medicines: MOCK_MEDICINE_DATABASE,
 
         assistantMessages,
         sendAssistantMessage,
